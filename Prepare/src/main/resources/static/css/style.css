@@ -104,4 +104,42 @@ select {
     letter-spacing: 0.5px;
 }
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+table th,
+table td {
+    padding: 16px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+}
+
+table th {
+    background: #f9fafb;
+    font-weight: 600;
+}
+
+table tr {
+    min-height: 60px;
+}
+
+table td {
+    min-height: 60px;
+    line-height: 1.5;
+}
+
+table td div {
+    margin-bottom: 8px;
+}
+
+table td .button {
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+
 

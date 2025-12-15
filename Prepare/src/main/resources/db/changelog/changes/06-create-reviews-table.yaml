@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 16
+      author: student
+      changes:
+        - createTable:
+            tableName: reviews
+            columns:
+              - column:
+                  name: reviewid
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: clientpasportnumber
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: roomnumber
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: serviceid
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: rating
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment
+                  type: varchar(2000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: createdat
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+
+
+

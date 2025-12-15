@@ -39,10 +39,12 @@
                 <td th:text="${room.price != null ? room.price.basePrice : 0}"
                     th:if="${false}">0</td>
                 <td>
-                    <a th:href="@{'/admin/rooms/' + ${room.roomNumber} + '/edit'}" class="button">Изменить</a>
-                    <form th:action="@{'/admin/rooms/' + ${room.roomNumber} + '/delete'}" method="post" style="display:inline">
-                        <button type="submit">Удалить</button>
-                    </form>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <a th:href="@{'/admin/rooms/' + ${room.roomNumber} + '/edit'}" class="button">Редактировать</a>
+                        <form th:action="@{'/admin/rooms/' + ${room.roomNumber} + '/delete'}" method="post" style="display:inline">
+                            <button type="submit" class="button" style="background: #dc2626;" onclick="return confirm('Вы уверены, что хотите удалить этот номер?')">Удалить</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>

@@ -1,0 +1,213 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15
+      author: student
+      changes:
+        - insert:
+            tableName: rooms
+            columns:
+              - column:
+                  name: roomnumber
+                  value: 101
+              - column:
+                  name: roomclass
+                  value: "Эконом"
+              - column:
+                  name: roomstatus
+                  value: "FREE"
+              - column:
+                  name: maxguests
+                  value: 2
+        
+        - insert:
+            tableName: rooms
+            columns:
+              - column:
+                  name: roomnumber
+                  value: 102
+              - column:
+                  name: roomclass
+                  value: "Эконом"
+              - column:
+                  name: roomstatus
+                  value: "FREE"
+              - column:
+                  name: maxguests
+                  value: 2
+        
+        - insert:
+            tableName: rooms
+            columns:
+              - column:
+                  name: roomnumber
+                  value: 201
+              - column:
+                  name: roomclass
+                  value: "Стандарт"
+              - column:
+                  name: roomstatus
+                  value: "FREE"
+              - column:
+                  name: maxguests
+                  value: 3
+        
+        - insert:
+            tableName: rooms
+            columns:
+              - column:
+                  name: roomnumber
+                  value: 202
+              - column:
+                  name: roomclass
+                  value: "Стандарт"
+              - column:
+                  name: roomstatus
+                  value: "FREE"
+              - column:
+                  name: maxguests
+                  value: 3
+        
+        - insert:
+            tableName: rooms
+            columns:
+              - column:
+                  name: roomnumber
+                  value: 301
+              - column:
+                  name: roomclass
+                  value: "Комфорт"
+              - column:
+                  name: roomstatus
+                  value: "FREE"
+              - column:
+                  name: maxguests
+                  value: 4
+        
+        - insert:
+            tableName: rooms
+            columns:
+              - column:
+                  name: roomnumber
+                  value: 401
+              - column:
+                  name: roomclass
+                  value: "Люкс"
+              - column:
+                  name: roomstatus
+                  value: "FREE"
+              - column:
+                  name: maxguests
+                  value: 4
+        
+        - insert:
+            tableName: rooms
+            columns:
+              - column:
+                  name: roomnumber
+                  value: 501
+              - column:
+                  name: roomclass
+                  value: "Президентский"
+              - column:
+                  name: roomstatus
+                  value: "FREE"
+              - column:
+                  name: maxguests
+                  value: 6
+
+  - changeSet:
+      id: 16
+      author: student
+      changes:
+        - insert:
+            tableName: prices
+            columns:
+              - column:
+                  name: objecttype
+                  value: "ROOM"
+              - column:
+                  name: objectnumber
+                  value: 101
+              - column:
+                  name: baseprice
+                  value: 2000
+        
+        - insert:
+            tableName: prices
+            columns:
+              - column:
+                  name: objecttype
+                  value: "ROOM"
+              - column:
+                  name: objectnumber
+                  value: 102
+              - column:
+                  name: baseprice
+                  value: 2000
+        
+        - insert:
+            tableName: prices
+            columns:
+              - column:
+                  name: objecttype
+                  value: "ROOM"
+              - column:
+                  name: objectnumber
+                  value: 201
+              - column:
+                  name: baseprice
+                  value: 3500
+        
+        - insert:
+            tableName: prices
+            columns:
+              - column:
+                  name: objecttype
+                  value: "ROOM"
+              - column:
+                  name: objectnumber
+                  value: 202
+              - column:
+                  name: baseprice
+                  value: 3500
+        
+        - insert:
+            tableName: prices
+            columns:
+              - column:
+                  name: objecttype
+                  value: "ROOM"
+              - column:
+                  name: objectnumber
+                  value: 301
+              - column:
+                  name: baseprice
+                  value: 5000
+        
+        - insert:
+            tableName: prices
+            columns:
+              - column:
+                  name: objecttype
+                  value: "ROOM"
+              - column:
+                  name: objectnumber
+                  value: 401
+              - column:
+                  name: baseprice
+                  value: 8000
+        
+        - insert:
+            tableName: prices
+            columns:
+              - column:
+                  name: objecttype
+                  value: "ROOM"
+              - column:
+                  name: objectnumber
+                  value: 501
+              - column:
+                  name: baseprice
+                  value: 15000
+
+

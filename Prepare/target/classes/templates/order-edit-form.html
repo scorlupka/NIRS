@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование заказа</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/orders/admin/all" class="button">К списку заказов</a>
+        <div id="session-info"></div>
+    </div>
+
+    <div class="card">
+        <h1>Редактирование заказа №<span th:text="${order.orderNumber}"></span></h1>
+        <div th:if="${error}" class="status error" style="margin-bottom: 20px;" th:text="${error}"></div>
+        <form th:action="@{'/orders/' + ${order.orderNumber}}" method="post" th:object="${order}">
+            <div>
+                <label>Клиент (паспорт)</label>
+                <input th:field="*{clientPassportNumber}" readonly>
+            </div>
+            <div>
+                <label>Дата заезда</label>
+                <input name="checkInDateStr" type="date" 
+                       th:value="${order.checkInDate != null ? order.checkInDate.toString() : ''}"
+                       required>
+            </div>
+            <div>
+                <label>Дата выезда</label>
+                <input name="checkOutDateStr" type="date"
+                       th:value="${order.checkOutDate != null ? order.checkOutDate.toString() : ''}"
+                       required>
+            </div>
+            <div>
+                <label>Количество гостей</label>
+                <input th:field="*{guestsCount}" type="number" min="1" required>
+            </div>
+            <div>
+                <label>Номер</label>
+                <select th:field="*{roomNumber}" required>
+                    <option value="">Выберите номер</option>
+                    <option th:each="room : ${rooms}"
+                            th:value="${room.roomNumber}"
+                            th:selected="${order.roomNumber != null && order.roomNumber == room.roomNumber}"
+                            th:text="${room.roomNumber + ' (' + room.roomClass + ', ' + room.maxGuests + ' мест)'}">
+                    </option>
+                </select>
+            </div>
+            <div>
+                <label>Статус оплаты</label>
+                <select th:field="*{paymentStatus}" required>
+                    <option value="UNPAID">Не оплачено</option>
+                    <option value="PAID">Оплачено</option>
+                </select>
+            </div>
+            <input type="submit" value="Сохранить изменения">
+        </form>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+

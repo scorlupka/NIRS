@@ -15,7 +15,7 @@ public class AdditionalService {
     private String serviceName;
 
     @Column(name = "servicetime", nullable = false)
-    private LocalDateTime serviceTime;
+    private String serviceTime; // Формат: "09:00-18:00" (с какого по какое время доступна)
 
     public Long getId() {
         return id;
@@ -33,11 +33,11 @@ public class AdditionalService {
         this.serviceName = serviceName;
     }
 
-    public LocalDateTime getServiceTime() {
+    public String getServiceTime() {
         return serviceTime;
     }
 
-    public void setServiceTime(LocalDateTime serviceTime) {
+    public void setServiceTime(String serviceTime) {
         this.serviceTime = serviceTime;
     }
 }

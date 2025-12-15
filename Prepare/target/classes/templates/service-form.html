@@ -21,8 +21,13 @@
                 <input th:field="*{serviceName}" required>
             </div>
             <div>
-                <label>Время исполнения (можно оставить пустым)</label>
-                <input th:field="*{serviceTime}" type="datetime-local">
+                <label>Время доступности (формат: 09:00-18:00)</label>
+                <input th:field="*{serviceTime}" placeholder="09:00-18:00" pattern="[0-9]{2}:[0-9]{2}-[0-9]{2}:[0-9]{2}" required>
+            </div>
+            <div>
+                <label>Цена услуги</label>
+                <input name="basePrice" type="number" min="0" 
+                       th:value="${price != null ? price.basePrice : 0}" required>
             </div>
             <input type="submit" value="Сохранить">
         </form>
@@ -31,5 +36,6 @@
 <script src="/js/app.js"></script>
 </body>
 </html>
+
 
 

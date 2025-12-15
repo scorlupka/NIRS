@@ -12,7 +12,7 @@ databaseChangeLog:
                   value: "Завтрак в номер"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "07:00-11:00"
         
         - insert:
             tableName: additionalservices
@@ -22,7 +22,7 @@ databaseChangeLog:
                   value: "Уборка номера"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "09:00-18:00"
         
         - insert:
             tableName: additionalservices
@@ -32,7 +32,7 @@ databaseChangeLog:
                   value: "Прачечная"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "08:00-20:00"
         
         - insert:
             tableName: additionalservices
@@ -42,7 +42,7 @@ databaseChangeLog:
                   value: "Трансфер из аэропорта"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "00:00-23:59"
         
         - insert:
             tableName: additionalservices
@@ -52,7 +52,7 @@ databaseChangeLog:
                   value: "SPA-процедуры"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "10:00-22:00"
         
         - insert:
             tableName: additionalservices
@@ -62,7 +62,7 @@ databaseChangeLog:
                   value: "Фитнес-зал"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "06:00-23:00"
         
         - insert:
             tableName: additionalservices
@@ -72,7 +72,7 @@ databaseChangeLog:
                   value: "Парковка"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "00:00-23:59"
         
         - insert:
             tableName: additionalservices
@@ -82,7 +82,8 @@ databaseChangeLog:
                   value: "Wi-Fi премиум"
               - column:
                   name: servicetime
-                  valueComputed: NOW()
+                  value: "00:00-23:59"
+
 
 
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование клиента</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/admin/clients" class="button">К списку клиентов</a>
+        <div id="session-info"></div>
+    </div>
+
+    <div class="card">
+        <h1>Редактирование клиента</h1>
+        <form th:action="@{'/admin/clients/' + ${client.passportNumber}}" method="post" th:object="${client}">
+            <div>
+                <label>ФИО</label>
+                <input th:field="*{nameLastname}" required>
+            </div>
+            <div>
+                <label>Логин</label>
+                <input th:field="*{username}" readonly>
+            </div>
+            <div>
+                <label>Телефон</label>
+                <input th:field="*{phone}" required>
+            </div>
+            <div>
+                <label>Серия паспорта</label>
+                <input th:field="*{passportSeria}" required>
+            </div>
+            <div>
+                <label>Номер паспорта</label>
+                <input th:field="*{passportNumber}" readonly>
+            </div>
+            <div>
+                <label>Тип клиента</label>
+                <select th:field="*{clientType}" required>
+                    <option value="REGULAR">Обычный</option>
+                    <option value="VIP">VIP</option>
+                </select>
+            </div>
+            <div>
+                <label>Роль</label>
+                <select th:field="*{role}" required>
+                    <option value="USER">Пользователь</option>
+                    <option value="ADMIN">Администратор</option>
+                </select>
+            </div>
+            <input type="submit" value="Сохранить изменения">
+        </form>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+

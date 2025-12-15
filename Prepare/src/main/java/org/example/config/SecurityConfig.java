@@ -35,7 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/", "/css/**", "/js/**", "/login", "/register",
                             "/api/auth/register", "/api/auth/login").permitAll()
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/orders/**").hasAnyRole("USER","ADMIN")
+                    .antMatchers("/orders/new", "/orders").hasRole("USER") // Только USER может создавать заказы
+                    .antMatchers("/orders/admin/**").hasRole("ADMIN") // Админ видит все заказы
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

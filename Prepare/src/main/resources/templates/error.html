@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/" class="button">На главную</a>
+        <div id="session-info"></div>
+    </div>
+
+    <div class="card">
+        <h1>Произошла ошибка</h1>
+        <div class="error-message" th:if="${error}">
+            <p th:text="${error}"></p>
+        </div>
+        <div class="error-message" th:if="${message}">
+            <p th:text="${message}"></p>
+        </div>
+        <div class="actions">
+            <a href="javascript:history.back()" class="button">Назад</a>
+            <a href="/" class="button">На главную</a>
+        </div>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+

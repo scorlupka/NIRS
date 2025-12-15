@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказ услуги</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/" class="button">На главную</a>
+        <div id="session-info"></div>
+    </div>
+
+    <div class="card">
+        <h1>Заказ дополнительной услуги</h1>
+        <div th:if="${error}" class="status error" style="margin-bottom: 20px;" th:text="${error}"></div>
+        <form th:action="@{/services/order}" method="post">
+            <div>
+                <label>Выберите услугу</label>
+                <select name="serviceId" required>
+                    <option value="">Выберите услугу</option>
+                    <option th:each="service : ${services}"
+                            th:value="${service.id}"
+                            th:text="${service.serviceName + ' (доступно: ' + service.serviceTime + ')'}">
+                    </option>
+                </select>
+            </div>
+            <input type="submit" value="Заказать услугу">
+        </form>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+

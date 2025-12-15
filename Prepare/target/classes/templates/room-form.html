@@ -22,7 +22,14 @@
             </div>
             <div>
                 <label>Класс</label>
-                <input th:field="*{roomClass}">
+                <select th:field="*{roomClass}" required>
+                    <option value="">Выберите класс</option>
+                    <option value="Эконом">Эконом</option>
+                    <option value="Стандарт">Стандарт</option>
+                    <option value="Комфорт">Комфорт</option>
+                    <option value="Люкс">Люкс</option>
+                    <option value="Президентский">Президентский</option>
+                </select>
             </div>
             <div>
                 <label>Статус</label>
@@ -44,5 +51,6 @@
 <script src="/js/app.js"></script>
 </body>
 </html>
+
 
 

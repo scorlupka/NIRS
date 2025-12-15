@@ -60,8 +60,12 @@ function applyRoleUi() {
 
         if (user.role === 'ADMIN') {
             if (btnAdminPanel) btnAdminPanel.style.display = 'inline-block';
+            if (btnMyOrders) btnMyOrders.style.display = 'none'; // Админу не нужна кнопка "Мои заказы"
+            if (btnNewOrder) btnNewOrder.style.display = 'none'; // Админу не нужна кнопка "Забронировать номер"
         } else {
             if (btnAdminPanel) btnAdminPanel.style.display = 'none';
+            if (btnMyOrders) btnMyOrders.style.display = 'inline-block';
+            if (btnNewOrder) btnNewOrder.style.display = 'inline-block';
         }
     }
 }
@@ -86,15 +90,33 @@ async function handleLogin(event) {
 async function handleRegister(event) {
     event.preventDefault();
     const status = document.getElementById('register-status');
+    
+    // Валидация телефона
+    const phone = event.target.phone.value;
+    if (!phone.startsWith('+')) {
+        setStatus(status, false, 'Телефон должен начинаться с +');
+        return;
+    }
+    
+    // Валидация дат (если есть поля с датами)
+    const checkInDate = event.target.checkInDate ? event.target.checkInDate.value : null;
+    if (checkInDate) {
+        const checkIn = new Date(checkInDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (checkIn < today) {
+            setStatus(status, false, 'Дата не может быть раньше сегодняшней');
+            return;
+        }
+    }
+    
     const payload = {
         username: event.target.username.value,
         password: event.target.password.value,
-        role: event.target.role.value,
         nameLastname: event.target.nameLastname.value,
-        phone: event.target.phone.value,
+        phone: phone,
         passportSeria: event.target.passportSeria.value,
-        passportNumber: event.target.passportNumber.value,
-        clientType: event.target.clientType.value
+        passportNumber: event.target.passportNumber.value
     };
 
     const { ok, data } = await postJson(`${apiUrl}/register`, payload);

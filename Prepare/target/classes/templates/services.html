@@ -25,6 +25,7 @@
                 <th>ID</th>
                 <th>Название</th>
                 <th>Время</th>
+                <th>Цена</th>
                 <th></th>
             </tr>
             </thead>
@@ -33,11 +34,14 @@
                 <td th:text="${s.id}"></td>
                 <td th:text="${s.serviceName}"></td>
                 <td th:text="${s.serviceTime}"></td>
+                <td th:text="${servicePrices != null && servicePrices.containsKey(s.id) ? servicePrices.get(s.id).basePrice : 'Не задана'}"></td>
                 <td>
-                    <a th:href="@{'/admin/services/' + ${s.id} + '/edit'}" class="button">Изменить</a>
-                    <form th:action="@{'/admin/services/' + ${s.id} + '/delete'}" method="post" style="display:inline">
-                        <button type="submit">Удалить</button>
-                    </form>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <a th:href="@{'/admin/services/' + ${s.id} + '/edit'}" class="button">Редактировать</a>
+                        <form th:action="@{'/admin/services/' + ${s.id} + '/delete'}" method="post" style="display:inline">
+                            <button type="submit" class="button" style="background: #dc2626;" onclick="return confirm('Вы уверены, что хотите удалить эту услугу?')">Удалить</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>

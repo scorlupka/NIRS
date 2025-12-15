@@ -98,7 +98,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: servicetime
-                  type: timestamp
+                  type: varchar(50)
                   constraints:
                     nullable: false
 

@@ -49,12 +49,12 @@ public class UserService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        user.setRole(registerDTO.getRole() != null ? registerDTO.getRole() : "USER");
+        user.setRole("USER"); // Всегда USER при регистрации
         user.setPassportNumber(registerDTO.getPassportNumber());
         user.setPassportSeria(registerDTO.getPassportSeria());
         user.setNameLastname(registerDTO.getNameLastname());
         user.setPhone(registerDTO.getPhone());
-        user.setClientType(registerDTO.getClientType() != null ? registerDTO.getClientType() : "REGULAR");
+        user.setClientType("REGULAR"); // По умолчанию REGULAR
 
         return userRepository.save(user);
     }
