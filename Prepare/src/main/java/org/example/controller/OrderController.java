@@ -250,9 +250,19 @@ public class OrderController {
 
     @GetMapping("/{orderNumber}/services")
     @PreAuthorize("hasRole('USER')")
-    public String addServiceToOrderForm(@PathVariable Integer orderNumber, Model model) {
+    public String addServiceToOrderForm(@PathVariable Integer orderNumber, Model model, Authentication authentication) {
         Order order = orderService.findById(orderNumber)
                 .orElseThrow(() -> new RuntimeException("Заказ не найден"));
+        
+        // Проверяем, что заказ принадлежит текущему пользователю
+        String username = authentication.getName();
+        String passportNumber = userService.findByUsername(username)
+                .map(u -> u.getPassportNumber())
+                .orElse(username);
+        
+        if (!order.getClientPassportNumber().equals(passportNumber)) {
+            throw new RuntimeException("У вас нет доступа к этому заказу");
+        }
         
         List<org.example.model.AdditionalService> services = additionalServiceRepository.findAll();
         Map<Long, Integer> servicePrices = new HashMap<>();
@@ -280,8 +290,21 @@ public class OrderController {
 
     @PostMapping("/{orderNumber}/services")
     @PreAuthorize("hasRole('USER')")
-    public String addServiceToOrder(@PathVariable Integer orderNumber, @RequestParam Long serviceId, Model model) {
+    public String addServiceToOrder(@PathVariable Integer orderNumber, @RequestParam Long serviceId, Model model, Authentication authentication) {
         try {
+            // Проверяем, что заказ принадлежит текущему пользователю
+            Order order = orderService.findById(orderNumber)
+                    .orElseThrow(() -> new RuntimeException("Заказ не найден"));
+            
+            String username = authentication.getName();
+            String passportNumber = userService.findByUsername(username)
+                    .map(u -> u.getPassportNumber())
+                    .orElse(username);
+            
+            if (!order.getClientPassportNumber().equals(passportNumber)) {
+                throw new RuntimeException("У вас нет доступа к этому заказу");
+            }
+            
             linkService.addServiceToOrder(orderNumber, serviceId);
             return "redirect:/orders";
         } catch (RuntimeException e) {
@@ -316,7 +339,20 @@ public class OrderController {
 
     @PostMapping("/{orderNumber}/services/{serviceId}/delete")
     @PreAuthorize("hasRole('USER')")
-    public String removeServiceFromOrder(@PathVariable Integer orderNumber, @PathVariable Long serviceId) {
+    public String removeServiceFromOrder(@PathVariable Integer orderNumber, @PathVariable Long serviceId, Authentication authentication) {
+        // Проверяем, что заказ принадлежит текущему пользователю
+        Order order = orderService.findById(orderNumber)
+                .orElseThrow(() -> new RuntimeException("Заказ не найден"));
+        
+        String username = authentication.getName();
+        String passportNumber = userService.findByUsername(username)
+                .map(u -> u.getPassportNumber())
+                .orElse(username);
+        
+        if (!order.getClientPassportNumber().equals(passportNumber)) {
+            throw new RuntimeException("У вас нет доступа к этому заказу");
+        }
+        
         linkService.removeServiceFromOrder(orderNumber, serviceId);
         return "redirect:/orders";
     }

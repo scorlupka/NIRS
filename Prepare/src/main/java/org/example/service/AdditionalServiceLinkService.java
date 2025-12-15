@@ -8,6 +8,7 @@ import org.example.repository.AdditionalServiceRepository;
 import org.example.repository.OrderServiceLinkRepository;
 import org.example.repository.PriceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class AdditionalServiceLinkService {
         this.priceRepository = priceRepository;
     }
 
+    @Transactional
     public void addServiceToOrder(Integer orderNumber, Long serviceId) {
         Order order = orderService.findById(orderNumber)
                 .orElseThrow(() -> new RuntimeException("Заказ не найден"));
@@ -63,6 +65,7 @@ public class AdditionalServiceLinkService {
         return additionalServiceRepository.findAllById(ids);
     }
 
+    @Transactional
     public void removeServiceFromOrder(Integer orderNumber, Long serviceId) {
         Order order = orderService.findById(orderNumber)
                 .orElseThrow(() -> new RuntimeException("Заказ не найден"));

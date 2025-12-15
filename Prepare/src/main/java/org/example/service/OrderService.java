@@ -127,6 +127,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
     public Order saveOrder(Order order) {
         return orderRepository.save(order);
     }
