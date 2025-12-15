@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Номер</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/admin/rooms" class="button">К списку номеров</a>
+        <div id="session-info"></div>
+    </div>
+
+    <div class="card">
+        <h1 th:text="${room.roomNumber} != null ? 'Редактирование номера' : 'Новый номер'"></h1>
+        <form th:action="${room.roomNumber} != null ? @{'/admin/rooms/' + ${room.roomNumber}} : @{/admin/rooms}"
+              method="post" th:object="${room}">
+            <div>
+                <label>Номер</label>
+                <input th:field="*{roomNumber}" th:readonly="${room.roomNumber} != null">
+            </div>
+            <div>
+                <label>Класс</label>
+                <input th:field="*{roomClass}">
+            </div>
+            <div>
+                <label>Статус</label>
+                <input th:field="*{roomStatus}">
+            </div>
+            <div>
+                <label>Макс. гостей</label>
+                <input th:field="*{maxGuests}" type="number" min="1">
+            </div>
+            <div>
+                <label>Цена за ночь</label>
+                <input name="basePrice" type="number" min="0"
+                       th:value="${price != null} ? ${price.basePrice} : 0">
+            </div>
+            <input type="submit" value="Сохранить">
+        </form>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+

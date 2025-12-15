@@ -3,36 +3,49 @@ package org.example.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "clients")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "pasportnumber", nullable = false, unique = true)
+    private String passportNumber;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false)
     private String role;
+
+    @Column(name = "namelastname", nullable = false)
+    private String nameLastname;
+
+    @Column(name = "phone", nullable = false, unique = true)
+    private String phone;
+
+    @Column(name = "pasportseria", nullable = false)
+    private String passportSeria;
+
+    @Column(name = "clienttype", nullable = false)
+    private String clientType;
 
     public User() {
     }
 
-    public User(String username, String password, String role) {
+    public User(String passportNumber, String username, String password, String role) {
+        this.passportNumber = passportNumber;
         this.username = username;
         this.password = password;
         this.role = role;
     }
 
-    public Long getId() {
-        return id;
+    public String getPassportNumber() {
+        return passportNumber;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPassportNumber(String passportNumber) {
+        this.passportNumber = passportNumber;
     }
 
     public String getUsername() {
@@ -57,6 +70,38 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getNameLastname() {
+        return nameLastname;
+    }
+
+    public void setNameLastname(String nameLastname) {
+        this.nameLastname = nameLastname;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPassportSeria() {
+        return passportSeria;
+    }
+
+    public void setPassportSeria(String passportSeria) {
+        this.passportSeria = passportSeria;
+    }
+
+    public String getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(String clientType) {
+        this.clientType = clientType;
     }
 }
 

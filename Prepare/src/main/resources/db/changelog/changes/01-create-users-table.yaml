@@ -7,6 +7,22 @@ databaseChangeLog:
             tableName: clients
             columns:
               - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: namelastname
                   type: varchar(255)
                   constraints:
@@ -230,4 +246,7 @@ databaseChangeLog:
             constraintName: fk_orderservices_services
             referencedTableName: additionalservices
             referencedColumnNames: serviceid
+
+
+
 

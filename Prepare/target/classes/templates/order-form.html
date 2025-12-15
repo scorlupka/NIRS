@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Новый заказ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/orders" class="button">К списку заказов</a>
+        <div id="session-info"></div>
+    </div>
+
+    <div class="card">
+        <h1>Бронирование номера</h1>
+        <form action="/orders" method="post" th:object="${order}">
+            <div>
+                <label>Паспорт клиента</label>
+                <input th:field="*{clientPassportNumber}" placeholder="Можно оставить пустым, будет использован логин">
+            </div>
+            <div>
+                <label>Дата заезда</label>
+                <input th:field="*{checkInDate}" type="date" required>
+            </div>
+            <div>
+                <label>Дата выезда</label>
+                <input th:field="*{checkOutDate}" type="date" required>
+            </div>
+            <div>
+                <label>Количество гостей</label>
+                <input th:field="*{guestsCount}" type="number" min="1" required>
+            </div>
+            <div>
+                <label>Номер</label>
+                <select th:field="*{roomNumber}">
+                    <option th:each="room : ${rooms}"
+                            th:value="${room.roomNumber}"
+                            th:text="${room.roomNumber + ' (' + room.roomClass + ')'}">
+                    </option>
+                </select>
+            </div>
+            <input type="submit" value="Создать заказ">
+        </form>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+

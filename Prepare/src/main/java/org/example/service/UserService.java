@@ -4,7 +4,7 @@ import org.example.dto.LoginDTO;
 import org.example.dto.RegisterDTO;
 import org.example.model.User;
 import org.example.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,9 +13,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User authenticate(LoginDTO loginDTO) {
@@ -27,8 +29,7 @@ public class UserService {
 
         User user = userOpt.get();
         
-        // Сравниваем пароли напрямую (без хеширования)
-        if (!user.getPassword().equals(loginDTO.getPassword())) {
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("Неверные учетные данные пользователя");
         }
 
@@ -36,20 +37,41 @@ public class UserService {
     }
 
     public User register(RegisterDTO registerDTO) {
-        if (userRepository.existsByUsername(registerDTO.getUsername())) {
+        // Логином используем ФИО
+        String username = registerDTO.getNameLastname();
+
+        if (userRepository.existsByUsername(username)) {
             throw new RuntimeException("Пользователь с таким именем уже существует");
         }
 
+        validateRequiredFields(registerDTO);
+
         User user = new User();
-        user.setUsername(registerDTO.getUsername());
-        user.setPassword(registerDTO.getPassword()); // Сохраняем пароль в открытом виде
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         user.setRole(registerDTO.getRole() != null ? registerDTO.getRole() : "USER");
+        user.setPassportNumber(registerDTO.getPassportNumber());
+        user.setPassportSeria(registerDTO.getPassportSeria());
+        user.setNameLastname(registerDTO.getNameLastname());
+        user.setPhone(registerDTO.getPhone());
+        user.setClientType(registerDTO.getClientType() != null ? registerDTO.getClientType() : "REGULAR");
 
         return userRepository.save(user);
     }
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    private void validateRequiredFields(RegisterDTO dto) {
+        if (isBlank(dto.getUsername()) || isBlank(dto.getPassword()) || isBlank(dto.getPassportNumber())
+                || isBlank(dto.getPassportSeria()) || isBlank(dto.getNameLastname()) || isBlank(dto.getPhone())) {
+            throw new RuntimeException("Заполните все обязательные поля");
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }
 

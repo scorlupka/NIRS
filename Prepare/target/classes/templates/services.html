@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Дополнительные услуги</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/admin/panel" class="button">Админ-панель</a>
+        <a href="/admin/clients" class="button">Клиенты</a>
+        <a href="/admin/rooms" class="button">Номера</a>
+        <a href="/orders/admin/all" class="button">Заказы</a>
+        <div id="session-info"></div>
+        <a href="#" class="button" id="logout-btn">Выйти</a>
+    </div>
+
+    <div class="card">
+        <h1>Дополнительные услуги</h1>
+        <a href="/admin/services/new" class="button">Добавить услугу</a>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Время</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${services}">
+                <td th:text="${s.id}"></td>
+                <td th:text="${s.serviceName}"></td>
+                <td th:text="${s.serviceTime}"></td>
+                <td>
+                    <a th:href="@{'/admin/services/' + ${s.id} + '/edit'}" class="button">Изменить</a>
+                    <form th:action="@{'/admin/services/' + ${s.id} + '/delete'}" method="post" style="display:inline">
+                        <button type="submit">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+

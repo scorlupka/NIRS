@@ -4,6 +4,11 @@ public class RegisterDTO {
     private String username;
     private String password;
     private String role;
+    private String nameLastname;
+    private String phone;
+    private String passportSeria;
+    private String passportNumber;
+    private String clientType;
 
     public RegisterDTO() {
     }
@@ -37,5 +42,44 @@ public class RegisterDTO {
     public void setRole(String role) {
         this.role = role;
     }
-}
 
+    public String getNameLastname() {
+        return nameLastname;
+    }
+
+    public void setNameLastname(String nameLastname) {
+        this.nameLastname = nameLastname;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPassportSeria() {
+        return passportSeria;
+    }
+
+    public void setPassportSeria(String passportSeria) {
+        this.passportSeria = passportSeria;
+    }
+
+    public String getPassportNumber() {
+        return passportNumber;
+    }
+
+    public void setPassportNumber(String passportNumber) {
+        this.passportNumber = passportNumber;
+    }
+
+    public String getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(String clientType) {
+        this.clientType = clientType;
+    }
+}

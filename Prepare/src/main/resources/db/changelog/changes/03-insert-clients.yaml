@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11
+      author: student
+      context: default
+      changes:
+        - insert:
+            tableName: clients
+            columns:
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: password
+                  value: "admin123"
+              - column:
+                  name: role
+                  value: "ADMIN"
+              - column:
+                  name: namelastname
+                  value: "Администратор Системы"
+              - column:
+                  name: phone
+                  value: "+70000000000"
+              - column:
+                  name: pasportseria
+                  value: "AA"
+              - column:
+                  name: pasportnumber
+                  value: "000000"
+              - column:
+                  name: clienttype
+                  value: "ADMIN"
+
+  - changeSet:
+      id: 12
+      author: student
+      context: default
+      changes:
+        - insert:
+            tableName: clients
+            columns:
+              - column:
+                  name: username
+                  value: "guest"
+              - column:
+                  name: password
+                  value: "guest123"
+              - column:
+                  name: role
+                  value: "USER"
+              - column:
+                  name: namelastname
+                  value: "Гость Отеля"
+              - column:
+                  name: phone
+                  value: "+70000000001"
+              - column:
+                  name: pasportseria
+                  value: "BB"
+              - column:
+                  name: pasportnumber
+                  value: "000001"
+              - column:
+                  name: clienttype
+                  value: "REGULAR"
+
+

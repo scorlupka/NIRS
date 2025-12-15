@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Номера отеля</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/admin/panel" class="button">Админ-панель</a>
+        <a href="/admin/rooms" class="button">Номера</a>
+        <a href="/admin/services" class="button">Услуги</a>
+        <a href="/orders/admin/all" class="button">Заказы</a>
+        <div id="session-info"></div>
+        <a href="#" class="button" id="logout-btn">Выйти</a>
+    </div>
+
+    <div class="card">
+        <h1>Номера</h1>
+        <a href="/admin/rooms/new" class="button">Добавить номер</a>
+        <table>
+            <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Класс</th>
+                <th>Статус</th>
+                <th>Макс. гостей</th>
+                <th>Цена (за ночь)</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="room : ${rooms}">
+                <td th:text="${room.roomNumber}"></td>
+                <td th:text="${room.roomClass}"></td>
+                <td th:text="${room.roomStatus}"></td>
+                <td th:text="${room.maxGuests}"></td>
+                <td th:text="${room.price != null ? room.price.basePrice : 0}"
+                    th:if="${false}">0</td>
+                <td>
+                    <a th:href="@{'/admin/rooms/' + ${room.roomNumber} + '/edit'}" class="button">Изменить</a>
+                    <form th:action="@{'/admin/rooms/' + ${room.roomNumber} + '/delete'}" method="post" style="display:inline">
+                        <button type="submit">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+
