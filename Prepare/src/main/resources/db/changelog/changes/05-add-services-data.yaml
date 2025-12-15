@@ -1,0 +1,86 @@
+databaseChangeLog:
+  # Добавление дополнительных услуг
+  - changeSet:
+      id: 14
+      author: student
+      changes:
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "Завтрак в номер"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+        
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "Уборка номера"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+        
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "Прачечная"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+        
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "Трансфер из аэропорта"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+        
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "SPA-процедуры"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+        
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "Фитнес-зал"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+        
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "Парковка"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+        
+        - insert:
+            tableName: additionalservices
+            columns:
+              - column:
+                  name: servicename
+                  value: "Wi-Fi премиум"
+              - column:
+                  name: servicetime
+                  valueComputed: NOW()
+
