@@ -183,11 +183,21 @@ public class OrderService {
             throw new RuntimeException("Заказ не найден");
         }
         
+        // Получаем номер комнаты перед удалением для обновления статуса
+        Order order = orderRepository.findById(orderNumber)
+                .orElseThrow(() -> new RuntimeException("Заказ не найден"));
+        Integer roomNumber = order.getRoomNumber();
+        
         // Удаляем все связанные услуги перед удалением заказа
         orderServiceLinkRepository.deleteByOrderNumber(orderNumber);
         
         // Удаляем заказ
         orderRepository.deleteById(orderNumber);
+        
+        // Обновляем статус комнаты после удаления заказа
+        if (roomNumber != null && roomNumber != 0) {
+            roomService.updateRoomStatusByNumber(roomNumber);
+        }
     }
 
     private void validateOrder(Order order) {

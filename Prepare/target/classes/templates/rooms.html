@@ -36,8 +36,10 @@
                 <td th:text="${room.roomClass}"></td>
                 <td th:text="${room.roomStatus}"></td>
                 <td th:text="${room.maxGuests}"></td>
-                <td th:text="${room.price != null ? room.price.basePrice : 0}"
-                    th:if="${false}">0</td>
+                <td>
+                    <span th:text="${roomPrices != null && roomPrices.containsKey(room.roomNumber) ? roomPrices.get(room.roomNumber) : 'Не указана'}"></span>
+                    <span th:if="${roomPrices != null && roomPrices.containsKey(room.roomNumber)}"> ₽</span>
+                </td>
                 <td>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <a th:href="@{'/admin/rooms/' + ${room.roomNumber} + '/edit'}" class="button">Редактировать</a>

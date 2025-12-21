@@ -31,9 +31,10 @@
                     <option value="Президентский">Президентский</option>
                 </select>
             </div>
-            <div>
+            <div th:if="${room.roomStatus != null}">
                 <label>Статус</label>
-                <input th:field="*{roomStatus}">
+                <input th:value="${room.roomStatus}" readonly style="background: #f3f4f6; cursor: not-allowed;">
+                <small style="color: #6b7280; display: block; margin-top: 4px;">Статус обновляется автоматически на основе заказов</small>
             </div>
             <div>
                 <label>Макс. гостей</label>

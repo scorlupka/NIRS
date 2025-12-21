@@ -24,7 +24,14 @@ public class RoomController {
     @GetMapping
     public String listRooms(Model model) {
         List<Room> rooms = roomService.findAll();
+        // Добавляем цены для каждого номера
+        java.util.Map<Integer, Integer> roomPrices = new java.util.HashMap<>();
+        for (Room room : rooms) {
+            roomService.findPriceForRoom(room.getRoomNumber())
+                    .ifPresent(price -> roomPrices.put(room.getRoomNumber(), price.getBasePrice()));
+        }
         model.addAttribute("rooms", rooms);
+        model.addAttribute("roomPrices", roomPrices);
         return "rooms";
     }
 
@@ -37,6 +44,9 @@ public class RoomController {
     @PostMapping
     public String createRoom(@ModelAttribute Room room,
                              @RequestParam("basePrice") Integer basePrice) {
+        // Статус устанавливается автоматически в RoomService.save()
+        // Устанавливаем начальный статус FREE для новой комнаты
+        room.setRoomStatus("FREE");
         roomService.save(room);
         if (basePrice != null) {
             roomService.saveRoomPrice(room.getRoomNumber(), basePrice);
@@ -59,6 +69,8 @@ public class RoomController {
                              @ModelAttribute Room room,
                              @RequestParam("basePrice") Integer basePrice) {
         room.setRoomNumber(roomNumber);
+        // Статус обновляется автоматически в RoomService.save()
+        // Не перезаписываем статус из формы, он вычисляется автоматически
         roomService.save(room);
         if (basePrice != null) {
             roomService.saveRoomPrice(roomNumber, basePrice);
