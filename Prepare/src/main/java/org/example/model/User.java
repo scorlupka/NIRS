@@ -27,9 +27,6 @@ public class User {
     @Column(name = "pasportseria", nullable = false)
     private String passportSeria;
 
-    @Column(name = "clienttype", nullable = false)
-    private String clientType;
-
     public User() {
     }
 
@@ -94,14 +91,6 @@ public class User {
 
     public void setPassportSeria(String passportSeria) {
         this.passportSeria = passportSeria;
-    }
-
-    public String getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(String clientType) {
-        this.clientType = clientType;
     }
 }
 

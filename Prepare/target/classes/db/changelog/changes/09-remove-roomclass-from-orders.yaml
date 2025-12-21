@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18
+      author: student
+      changes:
+        - dropColumn:
+            tableName: orders
+            columnName: roomclass
+

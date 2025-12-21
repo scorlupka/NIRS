@@ -9,16 +9,29 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public String handleRuntimeException(RuntimeException e, Model model) {
-        model.addAttribute("error", e.getMessage());
+        String errorMessage = e.getMessage();
+        if (errorMessage == null || errorMessage.isEmpty()) {
+            errorMessage = "Произошла ошибка: " + e.getClass().getSimpleName();
+        }
+        model.addAttribute("error", errorMessage);
+        // Логируем полный стек для отладки
+        e.printStackTrace();
         return "error";
     }
 
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
-        model.addAttribute("error", "Произошла непредвиденная ошибка: " + e.getMessage());
+        String errorMessage = "Произошла непредвиденная ошибка: " + e.getMessage();
+        if (e.getCause() != null) {
+            errorMessage += " (Причина: " + e.getCause().getMessage() + ")";
+        }
+        model.addAttribute("error", errorMessage);
+        // Логируем полный стек для отладки
+        e.printStackTrace();
         return "error";
     }
 }
+
 
 
 

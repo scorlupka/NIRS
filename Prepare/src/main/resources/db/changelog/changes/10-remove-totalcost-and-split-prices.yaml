@@ -1,0 +1,100 @@
+databaseChangeLog:
+  - changeSet:
+      id: 19
+      author: student
+      changes:
+        - dropColumn:
+            tableName: orders
+            columnName: totalcost
+
+  - changeSet:
+      id: 20
+      author: student
+      changes:
+        - createTable:
+            tableName: room_prices
+            columns:
+              - column:
+                  name: priceid
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: roomnumber
+                  type: int
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: baseprice
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: room_prices
+            baseColumnNames: roomnumber
+            constraintName: fk_room_prices_rooms
+            referencedTableName: rooms
+            referencedColumnNames: roomnumber
+
+  - changeSet:
+      id: 21
+      author: student
+      changes:
+        - createTable:
+            tableName: service_prices
+            columns:
+              - column:
+                  name: priceid
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: serviceid
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: baseprice
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: service_prices
+            baseColumnNames: serviceid
+            constraintName: fk_service_prices_services
+            referencedTableName: additionalservices
+            referencedColumnNames: serviceid
+
+  - changeSet:
+      id: 22
+      author: student
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO room_prices (roomnumber, baseprice)
+              SELECT objectnumber, baseprice
+              FROM prices
+              WHERE objecttype = 'ROOM'
+              ON CONFLICT (roomnumber) DO NOTHING;
+
+  - changeSet:
+      id: 23
+      author: student
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO service_prices (serviceid, baseprice)
+              SELECT objectnumber, baseprice
+              FROM prices
+              WHERE objecttype = 'SERVICE'
+              ON CONFLICT (serviceid) DO NOTHING;
+
+  - changeSet:
+      id: 24
+      author: student
+      changes:
+        - dropTable:
+            tableName: prices
+

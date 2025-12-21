@@ -8,7 +8,6 @@ public class RegisterDTO {
     private String phone;
     private String passportSeria;
     private String passportNumber;
-    private String clientType;
 
     public RegisterDTO() {
     }
@@ -73,13 +72,5 @@ public class RegisterDTO {
 
     public void setPassportNumber(String passportNumber) {
         this.passportNumber = passportNumber;
-    }
-
-    public String getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(String clientType) {
-        this.clientType = clientType;
     }
 }

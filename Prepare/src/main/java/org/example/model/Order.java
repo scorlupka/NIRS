@@ -23,14 +23,8 @@ public class Order {
     @Column(name = "guestscount", nullable = false)
     private Integer guestsCount;
 
-    @Column(name = "roomclass", nullable = false)
-    private String roomClass;
-
     @Column(name = "roomnumber", nullable = false)
     private Integer roomNumber;
-
-    @Column(name = "totalcost", nullable = false)
-    private Integer totalCost;
 
     @Column(name = "paymentstatus", nullable = false)
     private String paymentStatus;
@@ -75,28 +69,12 @@ public class Order {
         this.guestsCount = guestsCount;
     }
 
-    public String getRoomClass() {
-        return roomClass;
-    }
-
-    public void setRoomClass(String roomClass) {
-        this.roomClass = roomClass;
-    }
-
     public Integer getRoomNumber() {
         return roomNumber;
     }
 
     public void setRoomNumber(Integer roomNumber) {
         this.roomNumber = roomNumber;
-    }
-
-    public Integer getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(Integer totalCost) {
-        this.totalCost = totalCost;
     }
 
     public String getPaymentStatus() {

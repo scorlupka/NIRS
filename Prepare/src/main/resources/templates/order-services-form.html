@@ -48,7 +48,7 @@
             </div>
             <div style="margin-top: 16px;">
                 <p style="color: #666; font-size: 0.9em;">
-                    <strong>Текущая стоимость заказа:</strong> <span th:text="${order.totalCost}"></span> ₽
+                    <strong>Текущая стоимость заказа:</strong> <span th:text="${currentOrderCost != null ? currentOrderCost : 0}"></span> ₽
                 </p>
                 <p style="color: #059669; font-size: 0.9em; margin-top: 8px;">
                     <strong>Примечание:</strong> При добавлении услуги её стоимость будет автоматически добавлена к стоимости заказа.

@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 25
+      author: student
+      changes:
+        - sql:
+            sql: DO $$ DECLARE constraint_name varchar; BEGIN SELECT tc.CONSTRAINT_NAME INTO constraint_name FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' AND TABLE_NAME = 'room_prices' AND TABLE_SCHEMA = 'public'; IF constraint_name IS NOT NULL THEN EXECUTE 'ALTER TABLE public.room_prices DROP CONSTRAINT "' || constraint_name || '"'; END IF; END $$;
+            splitStatements: false
+        - dropColumn:
+            tableName: room_prices
+            columnName: priceid
+        - sql:
+            sql: ALTER TABLE room_prices ADD CONSTRAINT pk_room_prices PRIMARY KEY (roomnumber);
+            splitStatements: false
+
+  - changeSet:
+      id: 26
+      author: student
+      changes:
+        - sql:
+            sql: DO $$ DECLARE constraint_name varchar; BEGIN SELECT tc.CONSTRAINT_NAME INTO constraint_name FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' AND TABLE_NAME = 'service_prices' AND TABLE_SCHEMA = 'public'; IF constraint_name IS NOT NULL THEN EXECUTE 'ALTER TABLE public.service_prices DROP CONSTRAINT "' || constraint_name || '"'; END IF; END $$;
+            splitStatements: false
+        - dropColumn:
+            tableName: service_prices
+            columnName: priceid
+        - sql:
+            sql: ALTER TABLE service_prices ADD CONSTRAINT pk_service_prices PRIMARY KEY (serviceid);
+            splitStatements: false
+

@@ -61,8 +61,6 @@ public class ServiceOrderController {
             order.setCheckOutDate(LocalDate.now());
             order.setGuestsCount(1);
             order.setRoomNumber(0); // 0 означает заказ только услуги
-            order.setRoomClass("SERVICE_ONLY");
-            order.setTotalCost(0);
             order.setPaymentStatus("UNPAID");
 
             // Сохраняем заказ

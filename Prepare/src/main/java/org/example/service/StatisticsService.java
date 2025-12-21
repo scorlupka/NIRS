@@ -5,6 +5,7 @@ import org.example.model.Order;
 import org.example.repository.AdditionalServiceRepository;
 import org.example.repository.OrderRepository;
 import org.example.repository.OrderServiceLinkRepository;
+import org.example.service.OrderService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,19 +18,22 @@ public class StatisticsService {
     private final OrderRepository orderRepository;
     private final OrderServiceLinkRepository orderServiceLinkRepository;
     private final AdditionalServiceRepository additionalServiceRepository;
+    private final OrderService orderService;
 
     public StatisticsService(OrderRepository orderRepository,
                             OrderServiceLinkRepository orderServiceLinkRepository,
-                            AdditionalServiceRepository additionalServiceRepository) {
+                            AdditionalServiceRepository additionalServiceRepository,
+                            OrderService orderService) {
         this.orderRepository = orderRepository;
         this.orderServiceLinkRepository = orderServiceLinkRepository;
         this.additionalServiceRepository = additionalServiceRepository;
+        this.orderService = orderService;
     }
 
     public int getTotalOrdersCost() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
-                .mapToInt(Order::getTotalCost)
+                .mapToInt(orderService::calculateOrderCost)
                 .sum();
     }
 
@@ -52,7 +56,7 @@ public class StatisticsService {
     public int getPaidOrdersCost() {
         return orderRepository.findAll().stream()
                 .filter(order -> "PAID".equals(order.getPaymentStatus()))
-                .mapToInt(Order::getTotalCost)
+                .mapToInt(orderService::calculateOrderCost)
                 .sum();
     }
 
@@ -101,5 +105,6 @@ public class StatisticsService {
                 .orElse(0L);
     }
 }
+
 
 

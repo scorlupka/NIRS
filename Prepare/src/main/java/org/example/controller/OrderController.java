@@ -1,10 +1,8 @@
 package org.example.controller;
 
 import org.example.model.Order;
-import org.example.model.Price;
 import org.example.model.Room;
 import org.example.repository.AdditionalServiceRepository;
-import org.example.repository.PriceRepository;
 import org.example.service.OrderService;
 import org.example.service.RoomService;
 import org.example.service.UserService;
@@ -28,18 +26,15 @@ public class OrderController {
     private final UserService userService;
     private final AdditionalServiceRepository additionalServiceRepository;
     private final org.example.service.AdditionalServiceLinkService linkService;
-    private final PriceRepository priceRepository;
 
     public OrderController(OrderService orderService, RoomService roomService, UserService userService,
                            AdditionalServiceRepository additionalServiceRepository,
-                           org.example.service.AdditionalServiceLinkService linkService,
-                           PriceRepository priceRepository) {
+                           org.example.service.AdditionalServiceLinkService linkService) {
         this.orderService = orderService;
         this.roomService = roomService;
         this.userService = userService;
         this.additionalServiceRepository = additionalServiceRepository;
         this.linkService = linkService;
-        this.priceRepository = priceRepository;
     }
 
     // Список заказов для текущего пользователя
@@ -55,6 +50,10 @@ public class OrderController {
         // Получаем услуги для каждого заказа
         Map<Integer, List<org.example.model.AdditionalService>> orderServices = new HashMap<>();
         Map<Long, Integer> servicePrices = new HashMap<>();
+        // Получаем классы номеров для каждого заказа
+        Map<Integer, String> orderRoomClasses = new HashMap<>();
+        // Вычисляем стоимость для каждого заказа
+        Map<Integer, Integer> orderCosts = new HashMap<>();
         
         for (Order order : orders) {
             List<org.example.model.AdditionalService> services = linkService.findServicesForOrder(order.getOrderNumber());
@@ -63,17 +62,29 @@ public class OrderController {
             // Получаем цены для всех услуг
             for (org.example.model.AdditionalService service : services) {
                 if (!servicePrices.containsKey(service.getId())) {
-                    Price price = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", service.getId().intValue())
-                            .orElse(null);
-                    int servicePrice = price != null ? price.getBasePrice() : 0;
+                    int servicePrice = linkService.getServicePrice(service.getId());
                     servicePrices.put(service.getId(), servicePrice);
                 }
             }
+            
+            // Получаем класс номера из таблицы rooms
+            if (order.getRoomNumber() != null && order.getRoomNumber() != 0) {
+                roomService.findById(order.getRoomNumber())
+                        .ifPresent(room -> orderRoomClasses.put(order.getOrderNumber(), room.getRoomClass()));
+            } else {
+                orderRoomClasses.put(order.getOrderNumber(), "Только услуга");
+            }
+            
+            // Вычисляем стоимость заказа
+            int orderCost = orderService.calculateOrderCost(order);
+            orderCosts.put(order.getOrderNumber(), orderCost);
         }
         
         model.addAttribute("orders", orders);
         model.addAttribute("orderServices", orderServices);
         model.addAttribute("servicePrices", servicePrices);
+        model.addAttribute("orderRoomClasses", orderRoomClasses);
+        model.addAttribute("orderCosts", orderCosts);
         model.addAttribute("isAdmin", false);
         return "orders";
     }
@@ -180,6 +191,10 @@ public class OrderController {
         // Получаем услуги для каждого заказа
         Map<Integer, List<org.example.model.AdditionalService>> orderServices = new HashMap<>();
         Map<Long, Integer> servicePrices = new HashMap<>();
+        // Получаем классы номеров для каждого заказа
+        Map<Integer, String> orderRoomClasses = new HashMap<>();
+        // Вычисляем стоимость для каждого заказа
+        Map<Integer, Integer> orderCosts = new HashMap<>();
         
         for (Order order : orders) {
             List<org.example.model.AdditionalService> services = linkService.findServicesForOrder(order.getOrderNumber());
@@ -188,17 +203,29 @@ public class OrderController {
             // Получаем цены для всех услуг
             for (org.example.model.AdditionalService service : services) {
                 if (!servicePrices.containsKey(service.getId())) {
-                    Price price = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", service.getId().intValue())
-                            .orElse(null);
-                    int servicePrice = price != null ? price.getBasePrice() : 0;
+                    int servicePrice = linkService.getServicePrice(service.getId());
                     servicePrices.put(service.getId(), servicePrice);
                 }
             }
+            
+            // Получаем класс номера из таблицы rooms
+            if (order.getRoomNumber() != null && order.getRoomNumber() != 0) {
+                roomService.findById(order.getRoomNumber())
+                        .ifPresent(room -> orderRoomClasses.put(order.getOrderNumber(), room.getRoomClass()));
+            } else {
+                orderRoomClasses.put(order.getOrderNumber(), "Только услуга");
+            }
+            
+            // Вычисляем стоимость заказа
+            int orderCost = orderService.calculateOrderCost(order);
+            orderCosts.put(order.getOrderNumber(), orderCost);
         }
         
         model.addAttribute("orders", orders);
         model.addAttribute("orderServices", orderServices);
         model.addAttribute("servicePrices", servicePrices);
+        model.addAttribute("orderRoomClasses", orderRoomClasses);
+        model.addAttribute("orderCosts", orderCosts);
         model.addAttribute("isAdmin", true);
         return "orders";
     }
@@ -274,17 +301,19 @@ public class OrderController {
         
         // Получаем цены для всех услуг
         for (org.example.model.AdditionalService service : services) {
-            Price price = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", service.getId().intValue())
-                    .orElse(null);
-            int servicePrice = price != null ? price.getBasePrice() : 0;
+            int servicePrice = linkService.getServicePrice(service.getId());
             servicePrices.put(service.getId(), servicePrice);
         }
+        
+        // Вычисляем текущую стоимость заказа
+        int currentOrderCost = orderService.calculateOrderCost(order);
         
         model.addAttribute("order", order);
         model.addAttribute("services", services);
         model.addAttribute("servicePrices", servicePrices);
         model.addAttribute("addedServiceIds", addedServiceIds);
         model.addAttribute("addedServices", linkService.findServicesForOrder(orderNumber));
+        model.addAttribute("currentOrderCost", currentOrderCost);
         return "order-services-form";
     }
 
@@ -321,17 +350,19 @@ public class OrderController {
             
             // Получаем цены для всех услуг
             for (org.example.model.AdditionalService service : services) {
-                Price price = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", service.getId().intValue())
-                        .orElse(null);
-                int servicePrice = price != null ? price.getBasePrice() : 0;
+                int servicePrice = linkService.getServicePrice(service.getId());
                 servicePrices.put(service.getId(), servicePrice);
             }
+            
+            // Вычисляем текущую стоимость заказа
+            int currentOrderCost = orderService.calculateOrderCost(order);
             
             model.addAttribute("order", order);
             model.addAttribute("services", services);
             model.addAttribute("servicePrices", servicePrices);
             model.addAttribute("addedServiceIds", addedServiceIds);
             model.addAttribute("addedServices", linkService.findServicesForOrder(orderNumber));
+            model.addAttribute("currentOrderCost", currentOrderCost);
             model.addAttribute("error", e.getMessage());
             return "order-services-form";
         }

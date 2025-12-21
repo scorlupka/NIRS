@@ -1,10 +1,10 @@
 package org.example.service;
 
 import org.example.model.Order;
-import org.example.model.Price;
 import org.example.model.Room;
+import org.example.model.RoomPrice;
 import org.example.repository.OrderRepository;
-import org.example.repository.PriceRepository;
+import org.example.repository.RoomPriceRepository;
 import org.example.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +17,12 @@ import java.util.Optional;
 public class RoomService {
 
     private final RoomRepository roomRepository;
-    private final PriceRepository priceRepository;
+    private final RoomPriceRepository roomPriceRepository;
     private final OrderRepository orderRepository;
 
-    public RoomService(RoomRepository roomRepository, PriceRepository priceRepository, OrderRepository orderRepository) {
+    public RoomService(RoomRepository roomRepository, RoomPriceRepository roomPriceRepository, OrderRepository orderRepository) {
         this.roomRepository = roomRepository;
-        this.priceRepository = priceRepository;
+        this.roomPriceRepository = roomPriceRepository;
         this.orderRepository = orderRepository;
     }
 
@@ -50,17 +50,16 @@ public class RoomService {
         roomRepository.deleteById(roomNumber);
     }
 
-    public Optional<Price> findPriceForRoom(Integer roomNumber) {
-        return priceRepository.findFirstByObjectTypeAndObjectNumber("ROOM", roomNumber);
+    public Optional<RoomPrice> findPriceForRoom(Integer roomNumber) {
+        return roomPriceRepository.findByRoomNumber(roomNumber);
     }
 
-    public Price saveRoomPrice(Integer roomNumber, Integer basePrice) {
-        Price price = priceRepository.findFirstByObjectTypeAndObjectNumber("ROOM", roomNumber)
-                .orElseGet(Price::new);
-        price.setObjectType("ROOM");
-        price.setObjectNumber(roomNumber);
+    public RoomPrice saveRoomPrice(Integer roomNumber, Integer basePrice) {
+        RoomPrice price = roomPriceRepository.findByRoomNumber(roomNumber)
+                .orElseGet(() -> new RoomPrice(roomNumber, basePrice));
+        price.setRoomNumber(roomNumber);
         price.setBasePrice(basePrice);
-        return priceRepository.save(price);
+        return roomPriceRepository.save(price);
     }
 
     /**
@@ -96,7 +95,9 @@ public class RoomService {
      */
     @Transactional
     public void updateRoomStatusByNumber(Integer roomNumber) {
-        roomRepository.findById(roomNumber).ifPresent(this::updateRoomStatus);
+        if (roomNumber != null && roomNumber != 0) {
+            roomRepository.findById(roomNumber).ifPresent(this::updateRoomStatus);
+        }
     }
 }
 

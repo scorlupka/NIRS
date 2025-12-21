@@ -3,10 +3,10 @@ package org.example.service;
 import org.example.model.AdditionalService;
 import org.example.model.Order;
 import org.example.model.OrderServiceLink;
-import org.example.model.Price;
+import org.example.model.ServicePrice;
 import org.example.repository.AdditionalServiceRepository;
 import org.example.repository.OrderServiceLinkRepository;
-import org.example.repository.PriceRepository;
+import org.example.repository.ServicePriceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,20 +18,27 @@ public class AdditionalServiceLinkService {
     private final OrderService orderService;
     private final OrderServiceLinkRepository linkRepository;
     private final AdditionalServiceRepository additionalServiceRepository;
-    private final PriceRepository priceRepository;
+    private final ServicePriceRepository servicePriceRepository;
 
     public AdditionalServiceLinkService(OrderService orderService,
                                         OrderServiceLinkRepository linkRepository,
                                         AdditionalServiceRepository additionalServiceRepository,
-                                        PriceRepository priceRepository) {
+                                        ServicePriceRepository servicePriceRepository) {
         this.orderService = orderService;
         this.linkRepository = linkRepository;
         this.additionalServiceRepository = additionalServiceRepository;
-        this.priceRepository = priceRepository;
+        this.servicePriceRepository = servicePriceRepository;
     }
 
     @Transactional
     public void addServiceToOrder(Integer orderNumber, Long serviceId) {
+        if (orderNumber == null) {
+            throw new RuntimeException("Номер заказа не указан");
+        }
+        if (serviceId == null) {
+            throw new RuntimeException("ID услуги не указан");
+        }
+        
         Order order = orderService.findById(orderNumber)
                 .orElseThrow(() -> new RuntimeException("Заказ не найден"));
         AdditionalService service = additionalServiceRepository.findById(serviceId)
@@ -44,20 +51,15 @@ public class AdditionalServiceLinkService {
 
         OrderServiceLink link = new OrderServiceLink(order.getOrderNumber(), service.getId());
         linkRepository.save(link);
-
-        // Получаем цену услуги
-        Price servicePrice = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", service.getId().intValue())
-                .orElse(null);
-
-        // Пересчитываем стоимость заказа
-        int serviceCost = servicePrice != null ? servicePrice.getBasePrice() : 0;
-        int newTotalCost = order.getTotalCost() + serviceCost;
-        order.setTotalCost(newTotalCost);
         
         // Меняем статус оплаты на UNPAID при добавлении услуги
         order.setPaymentStatus("UNPAID");
         
-        orderService.saveOrder(order);
+        try {
+            orderService.saveOrder(order);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при сохранении заказа: " + e.getMessage(), e);
+        }
     }
 
     public List<AdditionalService> findServicesForOrder(Integer orderNumber) {
@@ -70,22 +72,19 @@ public class AdditionalServiceLinkService {
         Order order = orderService.findById(orderNumber)
                 .orElseThrow(() -> new RuntimeException("Заказ не найден"));
         
-        // Получаем цену услуги
-        Price servicePrice = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", serviceId.intValue())
-                .orElse(null);
-        
         // Удаляем связь
         linkRepository.deleteByOrderNumberAndServiceId(orderNumber, serviceId);
-        
-        // Пересчитываем стоимость заказа
-        int serviceCost = servicePrice != null ? servicePrice.getBasePrice() : 0;
-        int newTotalCost = Math.max(0, order.getTotalCost() - serviceCost);
-        order.setTotalCost(newTotalCost);
         
         // Меняем статус оплаты на UNPAID при удалении услуги
         order.setPaymentStatus("UNPAID");
         
         orderService.saveOrder(order);
+    }
+    
+    public Integer getServicePrice(Long serviceId) {
+        return servicePriceRepository.findByServiceId(serviceId)
+                .map(ServicePrice::getBasePrice)
+                .orElse(0);
     }
 }
 

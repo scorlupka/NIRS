@@ -1,10 +1,12 @@
 package org.example.service;
 
 import org.example.model.Order;
-import org.example.model.Price;
 import org.example.model.Room;
+import org.example.model.RoomPrice;
+import org.example.model.ServicePrice;
 import org.example.repository.OrderRepository;
 import org.example.repository.OrderServiceLinkRepository;
+import org.example.repository.ServicePriceRepository;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +24,16 @@ public class OrderService {
     private final RoomService roomService;
     private final UserRepository userRepository;
     private final OrderServiceLinkRepository orderServiceLinkRepository;
+    private final ServicePriceRepository servicePriceRepository;
 
     public OrderService(OrderRepository orderRepository, RoomService roomService, UserRepository userRepository,
-                        OrderServiceLinkRepository orderServiceLinkRepository) {
+                        OrderServiceLinkRepository orderServiceLinkRepository,
+                        ServicePriceRepository servicePriceRepository) {
         this.orderRepository = orderRepository;
         this.roomService = roomService;
         this.userRepository = userRepository;
         this.orderServiceLinkRepository = orderServiceLinkRepository;
+        this.servicePriceRepository = servicePriceRepository;
     }
 
     public List<Order> findAll() {
@@ -54,9 +59,7 @@ public class OrderService {
         // Если roomNumber = 0 или null, это заказ только услуги
         if (order.getRoomNumber() == null || order.getRoomNumber() == 0) {
             // Заказ только услуги - не проверяем комнату
-            order.setTotalCost(0); // Стоимость будет добавлена при привязке услуги
             order.setPaymentStatus("UNPAID");
-            order.setRoomClass("SERVICE_ONLY");
             return orderRepository.save(order);
         }
 
@@ -109,13 +112,7 @@ public class OrderService {
             throw new RuntimeException("Дата выезда должна быть позже даты заезда");
         }
 
-        Price price = roomService.findPriceForRoom(room.getRoomNumber())
-                .orElseThrow(() -> new RuntimeException("Для номера не задана цена"));
-
-        int totalCost = (int) (nights * price.getBasePrice());
-        order.setTotalCost(totalCost);
         order.setPaymentStatus("UNPAID");
-        order.setRoomClass(room.getRoomClass());
 
         Order savedOrder = orderRepository.save(order);
         
@@ -158,21 +155,12 @@ public class OrderService {
             existingOrder.setPaymentStatus(order.getPaymentStatus());
         }
         
-        // Пересчитываем стоимость
-        Room room = roomService.findById(existingOrder.getRoomNumber())
-                .orElseThrow(() -> new RuntimeException("Номер не найден"));
-        
-        long nights = ChronoUnit.DAYS.between(existingOrder.getCheckInDate(), existingOrder.getCheckOutDate());
-        Price price = roomService.findPriceForRoom(room.getRoomNumber())
-                .orElseThrow(() -> new RuntimeException("Для номера не задана цена"));
-        
-        existingOrder.setTotalCost((int) (nights * price.getBasePrice()));
-        existingOrder.setRoomClass(room.getRoomClass());
-        
         Order savedOrder = orderRepository.save(existingOrder);
         
-        // Обновляем статус комнаты после обновления заказа
-        roomService.updateRoomStatusByNumber(existingOrder.getRoomNumber());
+        // Обновляем статус комнаты после обновления заказа (если есть номер)
+        if (existingOrder.getRoomNumber() != null && existingOrder.getRoomNumber() != 0) {
+            roomService.updateRoomStatusByNumber(existingOrder.getRoomNumber());
+        }
         
         return savedOrder;
     }
@@ -198,6 +186,54 @@ public class OrderService {
         if (roomNumber != null && roomNumber != 0) {
             roomService.updateRoomStatusByNumber(roomNumber);
         }
+    }
+
+    /**
+     * Вычисляет общую стоимость заказа динамически
+     * Включает стоимость номера (если есть) и стоимость всех услуг
+     */
+    public int calculateOrderCost(Order order) {
+        if (order == null) {
+            return 0;
+        }
+        
+        int cost = 0;
+        
+        // Стоимость номера
+        if (order.getRoomNumber() != null && order.getRoomNumber() != 0 
+                && order.getCheckInDate() != null && order.getCheckOutDate() != null) {
+            Room room = roomService.findById(order.getRoomNumber()).orElse(null);
+            if (room != null) {
+                Optional<RoomPrice> priceOpt = roomService.findPriceForRoom(room.getRoomNumber());
+                if (priceOpt.isPresent()) {
+                    try {
+                        long nights = ChronoUnit.DAYS.between(order.getCheckInDate(), order.getCheckOutDate());
+                        if (nights > 0) {
+                            cost += (int) (nights * priceOpt.get().getBasePrice());
+                        }
+                    } catch (Exception e) {
+                        // Игнорируем ошибки вычисления дат
+                    }
+                }
+            }
+        }
+        
+        // Стоимость услуг
+        if (order.getOrderNumber() != null) {
+            try {
+                List<Long> serviceIds = orderServiceLinkRepository.findServiceIdsByOrderNumber(order.getOrderNumber());
+                for (Long serviceId : serviceIds) {
+                    Optional<ServicePrice> servicePriceOpt = servicePriceRepository.findByServiceId(serviceId);
+                    if (servicePriceOpt.isPresent()) {
+                        cost += servicePriceOpt.get().getBasePrice();
+                    }
+                }
+            } catch (Exception e) {
+                // Игнорируем ошибки получения услуг
+            }
+        }
+        
+        return cost;
     }
 
     private void validateOrder(Order order) {

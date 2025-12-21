@@ -40,14 +40,14 @@
                 <td th:text="${order.orderNumber}"></td>
                 <td th:text="${order.clientPassportNumber}"></td>
                 <td th:text="${order.roomNumber != null && order.roomNumber != 0 ? order.roomNumber : 'Только услуга'}"></td>
-                <td th:text="${order.roomClass != 'SERVICE_ONLY' ? order.roomClass : 'Только услуга'}"></td>
+                <td th:text="${orderRoomClasses != null && orderRoomClasses.containsKey(order.orderNumber) ? orderRoomClasses.get(order.orderNumber) : '—'}"></td>
                 <td>
                     <span th:text="${order.checkInDate}"></span>
                     –
                     <span th:text="${order.checkOutDate}"></span>
                 </td>
                 <td th:text="${order.guestsCount}"></td>
-                <td th:text="${order.totalCost}"></td>
+                <td th:text="${orderCosts != null && orderCosts.containsKey(order.orderNumber) ? orderCosts.get(order.orderNumber) : '—'}"></td>
                 <td th:text="${order.paymentStatus}"></td>
                 <td>
                     <div th:if="${orderServices != null && orderServices.containsKey(order.orderNumber) && !orderServices.get(order.orderNumber).isEmpty()}">

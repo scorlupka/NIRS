@@ -1,10 +1,10 @@
 package org.example.controller;
 
 import org.example.model.AdditionalService;
-import org.example.model.Price;
+import org.example.model.ServicePrice;
 import org.example.service.AdditionalServiceLinkService;
 import org.example.repository.AdditionalServiceRepository;
-import org.example.repository.PriceRepository;
+import org.example.repository.ServicePriceRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,23 +19,23 @@ public class AdditionalServiceController {
 
     private final AdditionalServiceRepository additionalServiceRepository;
     private final AdditionalServiceLinkService linkService;
-    private final PriceRepository priceRepository;
+    private final ServicePriceRepository servicePriceRepository;
 
     public AdditionalServiceController(AdditionalServiceRepository additionalServiceRepository,
                                        AdditionalServiceLinkService linkService,
-                                       PriceRepository priceRepository) {
+                                       ServicePriceRepository servicePriceRepository) {
         this.additionalServiceRepository = additionalServiceRepository;
         this.linkService = linkService;
-        this.priceRepository = priceRepository;
+        this.servicePriceRepository = servicePriceRepository;
     }
 
     @GetMapping
     public String listServices(Model model) {
         List<AdditionalService> services = additionalServiceRepository.findAll();
         // Получаем цены для каждой услуги
-        java.util.Map<Long, Price> servicePrices = new java.util.HashMap<>();
+        java.util.Map<Long, ServicePrice> servicePrices = new java.util.HashMap<>();
         for (AdditionalService service : services) {
-            priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", service.getId().intValue())
+            servicePriceRepository.findByServiceId(service.getId())
                     .ifPresent(price -> servicePrices.put(service.getId(), price));
         }
         model.addAttribute("services", services);
@@ -58,11 +58,8 @@ public class AdditionalServiceController {
         
         // Сохраняем цену услуги
         if (basePrice != null && basePrice > 0) {
-            Price price = new Price();
-            price.setObjectType("SERVICE");
-            price.setObjectNumber(savedService.getId().intValue());
-            price.setBasePrice(basePrice);
-            priceRepository.save(price);
+            ServicePrice price = new ServicePrice(savedService.getId(), basePrice);
+            servicePriceRepository.save(price);
         }
         
         return "redirect:/admin/services";
@@ -72,7 +69,7 @@ public class AdditionalServiceController {
     public String editService(@PathVariable Long id, Model model) {
         AdditionalService service = additionalServiceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Услуга не найдена"));
-        Price price = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", id.intValue()).orElse(null);
+        ServicePrice price = servicePriceRepository.findByServiceId(id).orElse(null);
         model.addAttribute("service", service);
         model.addAttribute("price", price);
         return "service-form";
@@ -87,16 +84,13 @@ public class AdditionalServiceController {
         additionalServiceRepository.save(service);
         
         // Обновляем или создаем цену услуги
-        Price existingPrice = priceRepository.findFirstByObjectTypeAndObjectNumber("SERVICE", id.intValue()).orElse(null);
+        ServicePrice existingPrice = servicePriceRepository.findByServiceId(id).orElse(null);
         if (existingPrice != null) {
             existingPrice.setBasePrice(basePrice);
-            priceRepository.save(existingPrice);
+            servicePriceRepository.save(existingPrice);
         } else if (basePrice != null && basePrice > 0) {
-            Price price = new Price();
-            price.setObjectType("SERVICE");
-            price.setObjectNumber(id.intValue());
-            price.setBasePrice(basePrice);
-            priceRepository.save(price);
+            ServicePrice price = new ServicePrice(id, basePrice);
+            servicePriceRepository.save(price);
         }
         
         return "redirect:/admin/services";

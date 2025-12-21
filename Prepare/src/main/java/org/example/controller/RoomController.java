@@ -1,7 +1,7 @@
 package org.example.controller;
 
-import org.example.model.Price;
 import org.example.model.Room;
+import org.example.model.RoomPrice;
 import org.example.service.RoomService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -58,7 +58,7 @@ public class RoomController {
     public String editRoom(@PathVariable Integer roomNumber, Model model) {
         Room room = roomService.findById(roomNumber)
                 .orElseThrow(() -> new RuntimeException("Номер не найден"));
-        Price price = roomService.findPriceForRoom(roomNumber).orElse(null);
+        RoomPrice price = roomService.findPriceForRoom(roomNumber).orElse(null);
         model.addAttribute("room", room);
         model.addAttribute("price", price);
         return "room-form";

@@ -54,7 +54,6 @@ public class UserService {
         user.setPassportSeria(registerDTO.getPassportSeria());
         user.setNameLastname(registerDTO.getNameLastname());
         user.setPhone(registerDTO.getPhone());
-        user.setClientType("REGULAR"); // По умолчанию REGULAR
 
         return userRepository.save(user);
     }

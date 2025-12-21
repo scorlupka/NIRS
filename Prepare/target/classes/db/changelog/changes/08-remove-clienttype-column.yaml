@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 17
+      author: student
+      changes:
+        - dropColumn:
+            tableName: clients
+            columnName: clienttype
+
+

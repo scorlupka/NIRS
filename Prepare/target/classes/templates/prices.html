@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Цены</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="page">
+    <div class="nav">
+        <a href="/admin/panel" class="button">Админ-панель</a>
+        <a href="/admin/prices" class="button">Цены</a>
+        <div id="session-info"></div>
+        <a href="#" class="button" id="logout-btn">Выйти</a>
+    </div>
+
+    <div class="card">
+        <h1>Цены номеров</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>Номер комнаты</th>
+                <th>Класс</th>
+                <th>Цена за ночь (₽)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="room : ${rooms}">
+                <td th:text="${room.roomNumber}"></td>
+                <td th:text="${room.roomClass}"></td>
+                <td>
+                    <span th:text="${roomPriceMap != null && roomPriceMap.containsKey(room.roomNumber) ? roomPriceMap.get(room.roomNumber) : 'Не указана'}"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+        <h1>Цены услуг</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>Название услуги</th>
+                <th>Время работы</th>
+                <th>Цена (₽)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="service : ${services}">
+                <td th:text="${service.serviceName}"></td>
+                <td th:text="${service.serviceTime}"></td>
+                <td>
+                    <span th:text="${servicePriceMap != null && servicePriceMap.containsKey(service.id) ? servicePriceMap.get(service.id) : 'Не указана'}"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+

@@ -44,7 +44,6 @@ public class ClientController {
         existingClient.setNameLastname(client.getNameLastname());
         existingClient.setPhone(client.getPhone());
         existingClient.setPassportSeria(client.getPassportSeria());
-        existingClient.setClientType(client.getClientType());
         existingClient.setRole(client.getRole());
         
         userRepository.save(existingClient);
