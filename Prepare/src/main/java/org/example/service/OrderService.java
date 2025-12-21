@@ -117,7 +117,12 @@ public class OrderService {
         order.setPaymentStatus("UNPAID");
         order.setRoomClass(room.getRoomClass());
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        
+        // Обновляем статус комнаты после создания заказа
+        roomService.updateRoomStatusByNumber(room.getRoomNumber());
+        
+        return savedOrder;
     }
 
     public Order markPaid(Integer orderNumber) {
@@ -164,7 +169,12 @@ public class OrderService {
         existingOrder.setTotalCost((int) (nights * price.getBasePrice()));
         existingOrder.setRoomClass(room.getRoomClass());
         
-        return orderRepository.save(existingOrder);
+        Order savedOrder = orderRepository.save(existingOrder);
+        
+        // Обновляем статус комнаты после обновления заказа
+        roomService.updateRoomStatusByNumber(existingOrder.getRoomNumber());
+        
+        return savedOrder;
     }
 
     @Transactional

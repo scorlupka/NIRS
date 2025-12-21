@@ -11,5 +11,6 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findByRoomNumberAndCheckOutDateAfterAndCheckInDateBefore(Integer roomNumber, LocalDate from, LocalDate to);
     List<Order> findByClientPassportNumber(String passportNumber);
+    List<Order> findByRoomNumber(Integer roomNumber);
 }
 
