@@ -18,7 +18,7 @@
         <form action="/orders" method="post" th:object="${order}">
             <div>
                 <label>Паспорт клиента</label>
-                <input th:field="*{clientPassportNumber}" placeholder="Можно оставить пустым, будет использован логин">
+                <input th:field="*{clientPassportNumber}" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
             </div>
             <div>
                 <label>Дата заезда</label>

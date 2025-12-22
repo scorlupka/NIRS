@@ -8,8 +8,11 @@
 <body>
 <div class="page">
     <div class="nav">
-        <a href="/admin/panel" class="button">Админ-панель</a>
-        <a href="/admin/prices" class="button">Цены</a>
+        <a href="/" class="button">Главная</a>
+        <a href="/orders" class="button" th:if="${!isAdmin}">Мои заказы</a>
+        <a href="/orders/new" class="button" th:if="${!isAdmin}">Бронирование</a>
+        <a href="/orders/admin/all" class="button" th:if="${isAdmin}">Все заказы</a>
+        <a href="/admin/panel" class="button" th:if="${isAdmin}">Админ-панель</a>
         <div id="session-info"></div>
         <a href="#" class="button" id="logout-btn">Выйти</a>
     </div>
@@ -61,4 +64,5 @@
 <script src="/js/app.js"></script>
 </body>
 </html>
+
 

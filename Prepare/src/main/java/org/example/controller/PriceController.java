@@ -9,7 +9,7 @@ import org.example.repository.ServicePriceRepository;
 import org.example.repository.RoomRepository;
 import org.example.repository.AdditionalServiceRepository;
 import org.example.service.RoomService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/admin/prices")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/prices")
 public class PriceController {
 
     private final RoomPriceRepository roomPriceRepository;
@@ -42,7 +41,11 @@ public class PriceController {
     }
 
     @GetMapping
-    public String listPrices(Model model) {
+    public String listPrices(Model model, Authentication authentication) {
+        // Проверяем, является ли пользователь администратором
+        boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
         // Получаем все цены номеров
         List<RoomPrice> roomPrices = roomPriceRepository.findAll();
         Map<Integer, Integer> roomPriceMap = new HashMap<>();
@@ -69,7 +72,9 @@ public class PriceController {
         model.addAttribute("servicePrices", servicePrices);
         model.addAttribute("servicePriceMap", servicePriceMap);
         model.addAttribute("services", services);
+        model.addAttribute("isAdmin", isAdmin);
         return "prices";
     }
 }
+
 

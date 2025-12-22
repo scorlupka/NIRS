@@ -2,6 +2,7 @@ package org.example.controller;
 
 import org.example.model.Order;
 import org.example.model.Room;
+import org.example.model.User;
 import org.example.repository.AdditionalServiceRepository;
 import org.example.service.OrderService;
 import org.example.service.RoomService;
@@ -42,9 +43,14 @@ public class OrderController {
     @PreAuthorize("hasRole('USER')")
     public String listMyOrders(Authentication authentication, Model model) {
         String username = authentication.getName();
-        String passportNumber = userService.findByUsername(username)
-                .map(u -> u.getPassportNumber())
-                .orElse(username);
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+        String passportNumber = user.getPassportNumber();
+        
+        if (passportNumber == null || passportNumber.isEmpty()) {
+            throw new RuntimeException("У пользователя не указан номер паспорта");
+        }
+        
         List<Order> orders = orderService.findByClient(passportNumber);
         
         // Получаем услуги для каждого заказа
@@ -92,8 +98,16 @@ public class OrderController {
     // Форма бронирования (для обычного пользователя)
     @GetMapping("/new")
     @PreAuthorize("hasRole('USER')")
-    public String newOrderForm(Model model) {
-        model.addAttribute("order", new Order());
+    public String newOrderForm(Model model, Authentication auth) {
+        Order order = new Order();
+        // Устанавливаем паспорт текущего пользователя
+        String username = auth.getName();
+        String passportNumber = userService.findByUsername(username)
+                .map(User::getPassportNumber)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+        order.setClientPassportNumber(passportNumber);
+        
+        model.addAttribute("order", order);
         List<Room> rooms = roomService.findAll();
         model.addAttribute("rooms", rooms);
         return "order-form";
@@ -108,6 +122,19 @@ public class OrderController {
             Authentication auth,
             Model model) {
         try {
+            // Сразу получаем и устанавливаем паспорт текущего пользователя
+            String username = auth.getName();
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+            String passportNumber = user.getPassportNumber();
+            
+            if (passportNumber == null || passportNumber.isEmpty()) {
+                throw new RuntimeException("У пользователя не указан номер паспорта");
+            }
+            
+            // Всегда используем паспорт текущего пользователя, игнорируя то, что может быть передано в форме
+            order.setClientPassportNumber(passportNumber);
+            
             // Конвертируем строки дат в LocalDate
             if (checkInDateStr != null && !checkInDateStr.isEmpty()) {
                 order.setCheckInDate(LocalDate.parse(checkInDateStr));
@@ -149,14 +176,6 @@ public class OrderController {
                 return "order-form";
             }
 
-            if (order.getClientPassportNumber() == null || order.getClientPassportNumber().isEmpty()) {
-                String username = auth.getName();
-                String passportNumber = userService.findByUsername(username)
-                        .map(u -> u.getPassportNumber())
-                        .orElse(username);
-                order.setClientPassportNumber(passportNumber);
-            }
-
             if (order.getRoomNumber() == null) {
                 model.addAttribute("error", "Необходимо выбрать номер");
                 model.addAttribute("order", order);
@@ -168,12 +187,34 @@ public class OrderController {
             orderService.createOrder(order);
             return "redirect:/orders";
         } catch (RuntimeException e) {
+            // Устанавливаем правильный паспорт даже при ошибке
+            try {
+                String username = auth.getName();
+                User user = userService.findByUsername(username)
+                        .orElse(null);
+                if (user != null && user.getPassportNumber() != null) {
+                    order.setClientPassportNumber(user.getPassportNumber());
+                }
+            } catch (Exception ex) {
+                // Игнорируем ошибки при установке паспорта в обработчике ошибок
+            }
             model.addAttribute("error", e.getMessage());
             model.addAttribute("order", order);
             List<Room> rooms = roomService.findAll();
             model.addAttribute("rooms", rooms);
             return "order-form";
         } catch (Exception e) {
+            // Устанавливаем правильный паспорт даже при ошибке
+            try {
+                String username = auth.getName();
+                User user = userService.findByUsername(username)
+                        .orElse(null);
+                if (user != null && user.getPassportNumber() != null) {
+                    order.setClientPassportNumber(user.getPassportNumber());
+                }
+            } catch (Exception ex) {
+                // Игнорируем ошибки при установке паспорта в обработчике ошибок
+            }
             model.addAttribute("error", "Ошибка при создании заказа: " + e.getMessage());
             model.addAttribute("order", order);
             List<Room> rooms = roomService.findAll();

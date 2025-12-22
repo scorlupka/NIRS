@@ -46,7 +46,21 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
+    @Transactional
     public void delete(Integer roomNumber) {
+        // Удаляем все заказы, связанные с этой комнатой
+        List<Order> orders = orderRepository.findByRoomNumber(roomNumber);
+        for (Order order : orders) {
+            // Устанавливаем roomNumber = 0 для заказов, чтобы не нарушить целостность
+            order.setRoomNumber(0);
+            orderRepository.save(order);
+        }
+        
+        // Удаляем цену комнаты
+        roomPriceRepository.findByRoomNumber(roomNumber)
+                .ifPresent(roomPriceRepository::delete);
+        
+        // Теперь можно безопасно удалить комнату
         roomRepository.deleteById(roomNumber);
     }
 

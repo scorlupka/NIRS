@@ -39,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/orders/new", "/orders").hasRole("USER") // Только USER может создавать заказы
                     .antMatchers("/orders/admin/**").hasRole("ADMIN") // Админ видит все заказы
+                    .antMatchers("/prices").authenticated() // Страница цен доступна всем авторизованным пользователям
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

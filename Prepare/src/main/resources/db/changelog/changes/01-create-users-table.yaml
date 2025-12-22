@@ -45,11 +45,6 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     unique: true
-              - column:
-                  name: clienttype
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
 
   - changeSet:
       id: 2
@@ -135,17 +130,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: roomclass
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
-              - column:
                   name: roomnumber
-                  type: int
-                  constraints:
-                    nullable: false
-              - column:
-                  name: totalcost
                   type: int
                   constraints:
                     nullable: false

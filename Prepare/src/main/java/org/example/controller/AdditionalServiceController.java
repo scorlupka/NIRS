@@ -97,7 +97,16 @@ public class AdditionalServiceController {
     }
 
     @PostMapping("/{id}/delete")
+    @org.springframework.transaction.annotation.Transactional
     public String deleteService(@PathVariable Long id) {
+        // Удаляем все связи услуги с заказами
+        linkService.deleteAllLinksByServiceId(id);
+        
+        // Удаляем цену услуги
+        servicePriceRepository.findByServiceId(id)
+                .ifPresent(servicePriceRepository::delete);
+        
+        // Теперь можно безопасно удалить услугу
         additionalServiceRepository.deleteById(id);
         return "redirect:/admin/services";
     }

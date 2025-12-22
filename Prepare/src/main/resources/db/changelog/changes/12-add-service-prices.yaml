@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 27
+      author: student
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO service_prices (serviceid, baseprice)
+              SELECT a.serviceid, 2000
+              FROM additionalservices a
+              WHERE NOT EXISTS (
+                SELECT 1 FROM service_prices sp WHERE sp.serviceid = a.serviceid
+              );
+            splitStatements: false
+

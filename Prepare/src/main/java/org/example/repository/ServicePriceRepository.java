@@ -11,3 +11,4 @@ public interface ServicePriceRepository extends JpaRepository<ServicePrice, Long
     Optional<ServicePrice> findByServiceId(Long serviceId);
 }
 
+

@@ -1,13 +1,5 @@
 databaseChangeLog:
   - changeSet:
-      id: 19
-      author: student
-      changes:
-        - dropColumn:
-            tableName: orders
-            columnName: totalcost
-
-  - changeSet:
       id: 20
       author: student
       changes:

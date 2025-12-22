@@ -86,6 +86,11 @@ public class AdditionalServiceLinkService {
                 .map(ServicePrice::getBasePrice)
                 .orElse(0);
     }
+    
+    @Transactional
+    public void deleteAllLinksByServiceId(Long serviceId) {
+        linkRepository.deleteByServiceId(serviceId);
+    }
 }
 
 

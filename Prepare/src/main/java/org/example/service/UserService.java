@@ -44,6 +44,11 @@ public class UserService {
             throw new RuntimeException("Пользователь с таким именем уже существует");
         }
 
+        // Проверяем уникальность паспорта
+        if (userRepository.existsByPassportNumber(registerDTO.getPassportNumber())) {
+            throw new RuntimeException("Пользователь с таким номером паспорта уже зарегистрирован");
+        }
+
         validateRequiredFields(registerDTO);
 
         User user = new User();

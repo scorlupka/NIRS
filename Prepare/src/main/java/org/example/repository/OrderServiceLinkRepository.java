@@ -15,8 +15,10 @@ public interface OrderServiceLinkRepository extends JpaRepository<OrderServiceLi
     List<Long> findServiceIdsByOrderNumber(Integer orderNumber);
 
     void deleteByOrderNumberAndServiceId(Integer orderNumber, Long serviceId);
-    
+
     void deleteByOrderNumber(Integer orderNumber);
+    
+    void deleteByServiceId(Long serviceId);
 }
 
 
